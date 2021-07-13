@@ -80,6 +80,13 @@ class Game:
 
         if self.snake.head[0] < 1 or self.snake.head[0] > 18 or self.snake.head[1] < 1 or self.snake.head[1] > GRID_HEIGHT - 1:
             self.game_over = True
+        pos = list(self.snake.head)
+        for item in self.snake.path:
+            pos[0] += item[0]
+            pos[1] += item[1]
+            if list(self.snake.head) == pos:
+                self.game_over = True
+                break
 
     def move_apple(self):
         while True:
@@ -104,7 +111,7 @@ class Game:
 
         draw.rectangle(
             [self.apple[0] * 60 + 10,(self.apple[1] - scroll) * 60 + 10,self.apple[0] * 60 + 50,(self.apple[1] - scroll) * 60 + 50],
-            fill=(255,0,0,255)
+            fill=(0,255,255,255)
         )
 
         if self.snake.head[1] <= 2:
@@ -126,7 +133,67 @@ class Game:
             fill=(0,255,0,255)
         )
 
+        if self.snake.head[1] <= 2:
+            draw.line(
+                [
+                    (1 * 60 + 20,10),
+                    (1 * 60 + 30,0),
+                    (1 * 60 + 40,10)
+                ],
+                fill=(255,0,0,255),
+                width=2
+            )
+            draw.line(
+                [
+                    (18 * 60 + 20,10),
+                    (18 * 60 + 30,0),
+                    (18 * 60 + 40,10)
+                ],
+                fill=(255,0,0,255),
+                width=2
+            )
+        elif self.snake.head[1] >= GRID_HEIGHT - 2:
+            draw.line(
+                [
+                    (1 * 60 + 20,50),
+                    (1 * 60 + 30,60),
+                    (1 * 60 + 40,50)
+                ],
+                fill=(255,0,0,255),
+                width=2
+            )
+            draw.line(
+                [
+                    (18 * 60 + 20,50),
+                    (18 * 60 + 30,60),
+                    (18 * 60 + 40,50)
+                ],
+                fill=(255,0,0,255),
+                width=2
+            )
+
+        if self.apple[1] < self.snake.head[1]:
+            draw.line(
+                [
+                    (self.apple[0] * 60 + 20,10),
+                    (self.apple[0] * 60 + 30,0),
+                    (self.apple[0] * 60 + 40,10)
+                ],
+                fill=(0,255,255,255),
+                width=2
+            )
+        elif self.apple[1] > self.snake.head[1]:
+            draw.line(
+                [
+                    (self.apple[0] * 60 + 20,50),
+                    (self.apple[0] * 60 + 30,60),
+                    (self.apple[0] * 60 + 40,50)
+                ],
+                fill=(0,255,255,255),
+                width=2
+            )
+
         if self.game_over:
             font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
             dims = draw.textsize("GAME OVER",font=font)
-            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"GAME OVER",fill=(255,255,255,255),font=font,align="center")
+            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"GAME OVER",fill=(255,0,0,255),font=font,align="center")
