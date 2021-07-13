@@ -16,23 +16,19 @@ def render(screen,game,fnum):
     screen.fill((255,255,255))
 
     if game.game_over:
-        text = "Game over"
+        text = ["Game over","Score: " + str(len(game.snake.path) + 1),"","Tap the touchbar","to play again"]
         color = (255,0,0)
     elif game.win:
-        text = "You win!"
+        text = ["You win!","","Tap the touchbar","to play again"]
         color = (0,200,200)
     else:
-        text = "Play on the touchbar"
+        text = ["Play on the touchbar"]
         color = (0,0,0)
 
-    font = pygame.font.Font(FONT_PATH,20)
-    rendered = font.render(text,False,color)
-    text_rect = rendered.get_rect(center=(150,150))
-    screen.blit(rendered,text_rect)
-
-    if game.game_over:
-        rendered = font.render("Score: " + str(len(game.snake.path) + 1),False,(255,0,0))
-        text_rect = rendered.get_rect(center=(150,170))
+    for (index,line) in enumerate(text):
+        font = pygame.font.Font(FONT_PATH,20)
+        rendered = font.render(line,False,color)
+        text_rect = rendered.get_rect(center=(150,150 + 20 * (-len(text) / 2 + index)))
         screen.blit(rendered,text_rect)
 
 def button_press(button):
