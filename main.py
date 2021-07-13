@@ -45,10 +45,9 @@ def main():
                 elif event.key == pygame.K_RIGHT:
                     game.snake.queue((1,0))
 
-        fnum += 1
-        fnum %= 5
+        fnum = (fnum + 1) % 5
         if fnum == 0:
-            game.snake.update()
+            game.update()
 
         render(screen,fnum)
         pygame.display.update()

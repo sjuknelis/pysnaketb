@@ -1,13 +1,20 @@
+import random
+GRID_HEIGHT = 10
+
 class Snake:
-    head = (5,3)
-    path = [(-1,0),(-1,0),(0,1),(0,1),(1,0),(1,0),(0,1),(0,1),(-1,0),(-1,0)]
+    head = (10,5)
+    path = [(-1,0),(-1,0)]
     direction = (1,0)
     move_buffer = []
+    eaten = False
 
     def update(self):
         self.head = (self.head[0] + self.direction[0],self.head[1] + self.direction[1])
         self.path.insert(0,(-self.direction[0],-self.direction[1]))
-        self.path.pop()
+        if not self.eaten:
+            self.path.pop()
+        else:
+            self.eaten = False
 
         if len(self.move_buffer) > 0:
             for (index,item) in enumerate(self.move_buffer):
@@ -17,7 +24,8 @@ class Snake:
                     break
 
     def queue(self,direction):
-        self.move_buffer.insert(0,direction)
+        if not direction in self.move_buffer:
+            self.move_buffer.insert(0,direction)
 
     def render(self,draw,fnum):
         scroll = self.head[1] + self.direction[1] * 0.2 * fnum
@@ -26,7 +34,7 @@ class Snake:
         for (index,item) in enumerate(self.path):
             pos[0] += item[0]
             pos[1] += item[1]
-            if index == len(self.path) - 1:
+            if index == len(self.path) - 1 and not self.eaten:
                 pos[0] -= item[0] * 0.2 * fnum
                 pos[1] -= item[1] * 0.2 * fnum
             if abs(pos[1] - self.head[1]) <= 1:
@@ -54,21 +62,49 @@ class Snake:
 
 class Game:
     snake = Snake()
-    apple = (10,10)
+
+    def __init__(self):
+        self.move_apple()
+
+    def update(self):
+        self.snake.update()
+
+        if self.snake.head == self.apple:
+            self.snake.eaten = True
+            self.move_apple()
+
+    def move_apple(self):
+        while True:
+            self.apple = (random.randrange(1,19),random.randrange(1,GRID_HEIGHT - 1))
+            print(self.apple)
+            pos = list(self.snake.head)
+            if list(self.apple) == pos:
+                continue
+            for item in self.snake.path:
+                pos[0] += item[0]
+                pos[1] += item[1]
+                if list(self.apple) == pos:
+                    continue
+            break
 
     def render(self,draw,fnum):
         scroll = self.snake.head[1] + self.snake.direction[1] * 0.2 * fnum
 
         self.snake.render(draw,fnum)
 
+        draw.rectangle(
+            [self.apple[0] * 60 + 10,(self.apple[1] - scroll) * 60 + 10,self.apple[0] * 60 + 50,(self.apple[1] - scroll) * 60 + 50],
+            fill=(255,0,0,255)
+        )
+
         if self.snake.head[1] <= 2:
             draw.rectangle(
-                [10,(- scroll) * 60,1190,(- scroll + 1) * 60 + 5],
+                [0,(- scroll) * 60,1200,(- scroll + 1) * 60 + 5],
                 fill=(0,255,0,255)
             )
-        if self.snake.head[1] >= 18:
+        if self.snake.head[1] >= GRID_HEIGHT - 2:
             draw.rectangle(
-                [10,(20 - scroll) * 60 - 5,1190,(20 - scroll + 1) * 60],
+                [0,(GRID_HEIGHT - scroll) * 60 - 5,1200,(GRID_HEIGHT - scroll + 1) * 60],
                 fill=(0,255,0,255)
             )
         draw.rectangle(
