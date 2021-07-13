@@ -13,8 +13,8 @@ def render(screen,fnum):
 
     screen.fill((255,255,255))
 
-def f(button):
-    print("f")
+def button_press(button):
+    pass
 
 def main():
     pygame.init()
@@ -23,7 +23,7 @@ def main():
     tb.prepare_pygame()
     button = tb.TouchBarItems.Button(
         title=None,
-        action=f,
+        action=button_press,
         color=tb.Color.black,
         image_position=tb.ImagePosition.imageonly,
         image="game.png"

@@ -1,4 +1,5 @@
-import random
+import sys,time,random
+from PIL import ImageFont
 GRID_HEIGHT = 10
 
 class Snake:
@@ -62,21 +63,27 @@ class Snake:
 
 class Game:
     snake = Snake()
+    game_over = False
 
     def __init__(self):
         self.move_apple()
 
     def update(self):
+        if self.game_over:
+            return
+
         self.snake.update()
 
         if self.snake.head == self.apple:
             self.snake.eaten = True
             self.move_apple()
 
+        if self.snake.head[0] < 1 or self.snake.head[0] > 18 or self.snake.head[1] < 1 or self.snake.head[1] > GRID_HEIGHT - 1:
+            self.game_over = True
+
     def move_apple(self):
         while True:
             self.apple = (random.randrange(1,19),random.randrange(1,GRID_HEIGHT - 1))
-            print(self.apple)
             pos = list(self.snake.head)
             if list(self.apple) == pos:
                 continue
@@ -88,6 +95,9 @@ class Game:
             break
 
     def render(self,draw,fnum):
+        if self.game_over:
+            fnum = 0
+
         scroll = self.snake.head[1] + self.snake.direction[1] * 0.2 * fnum
 
         self.snake.render(draw,fnum)
@@ -115,3 +125,8 @@ class Game:
             [1140,0,1200,60],
             fill=(0,255,0,255)
         )
+
+        if self.game_over:
+            font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
+            dims = draw.textsize("GAME OVER",font=font)
+            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"GAME OVER",fill=(255,255,255,255),font=font,align="center")
