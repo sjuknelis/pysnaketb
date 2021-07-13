@@ -3,9 +3,9 @@ import PyTouchBar as tb
 from PIL import Image,ImageDraw
 from game import Game
 
-game = Game()
+reset = False
 
-def render(screen,fnum):
+def render(screen,game,fnum):
     im = Image.new("RGBA",(1200,60),(0,0,0,255))
     draw = ImageDraw.Draw(im)
     game.render(draw,fnum)
@@ -14,9 +14,13 @@ def render(screen,fnum):
     screen.fill((255,255,255))
 
 def button_press(button):
-    pass
+    global reset
+    reset = True
 
 def main():
+    global reset
+    game = Game()
+
     pygame.init()
     screen = pygame.display.set_mode((200,200))
 
@@ -48,8 +52,11 @@ def main():
         fnum = (fnum + 1) % 5
         if fnum == 0:
             game.update()
+            if reset:
+                game.reset()
+                reset = False
 
-        render(screen,fnum)
+        render(screen,game,fnum)
         pygame.display.update()
         button.image = "game.png"
 

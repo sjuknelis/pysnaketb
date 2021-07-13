@@ -1,73 +1,17 @@
 import sys,time,random
 from PIL import ImageFont
+from snake import Snake
 GRID_HEIGHT = 10
 
-class Snake:
-    head = (9,5)
-    path = [(-1,0),(-1,0)]
-    direction = (1,0)
-    move_buffer = []
-    eaten = False
-
-    def update(self):
-        self.head = (self.head[0] + self.direction[0],self.head[1] + self.direction[1])
-        self.path.insert(0,(-self.direction[0],-self.direction[1]))
-        if not self.eaten:
-            self.path.pop()
-        else:
-            self.eaten = False
-
-        if len(self.move_buffer) > 0:
-            for (index,item) in enumerate(self.move_buffer):
-                if item != self.direction and item != (-self.direction[0],-self.direction[1]):
-                    self.direction = item
-                    del self.move_buffer[index]
-                    break
-
-    def queue(self,direction):
-        if not direction in self.move_buffer:
-            self.move_buffer.insert(0,direction)
-
-    def render(self,draw,fnum):
-        scroll = self.head[1] + self.direction[1] * 0.2 * fnum
-        pos = list(self.head)
-        last = list(pos)
-        for (index,item) in enumerate(self.path):
-            pos[0] += item[0]
-            pos[1] += item[1]
-            if index == len(self.path) - 1 and not self.eaten:
-                pos[0] -= item[0] * 0.2 * fnum
-                pos[1] -= item[1] * 0.2 * fnum
-            if abs(pos[1] - self.head[1]) <= 1:
-                draw.rectangle(
-                    [
-                        min(pos[0],last[0]) * 60 + 10,
-                        (min(pos[1],last[1]) - scroll) * 60 + 10,
-                        max(pos[0],last[0]) * 60 + 50,
-                        (max(pos[1],last[1]) - scroll) * 60 + 50
-                    ],
-                    fill=(0,255,0,255)
-                )
-            last = list(pos)
-
-        ext = (self.head[0] + self.direction[0] * 0.2 * fnum,self.head[1] + self.direction[1] * 0.2 * fnum)
-        draw.rectangle(
-            [
-                min(self.head[0],ext[0]) * 60 + 10,
-                (min(self.head[1],ext[1]) - scroll) * 60 + 10,
-                max(self.head[0],ext[0]) * 60 + 50,
-                (max(self.head[1],ext[1]) - scroll) * 60 + 50
-            ],
-            fill=(0,255,0,255)
-        )
-
 class Game:
-    snake = Snake()
-    game_over = False
-    win = False
-
     def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.snake = Snake()
         self.move_apple()
+        self.game_over = False
+        self.win = False
 
     def update(self):
         if self.game_over or self.win:
@@ -98,12 +42,14 @@ class Game:
             pos = list(self.snake.head)
             if list(self.apple) == pos:
                 continue
+            valid = True
             for item in self.snake.path:
                 pos[0] += item[0]
                 pos[1] += item[1]
                 if list(self.apple) == pos:
-                    continue
-            break
+                    valid = False
+            if valid:
+                break
 
     def render(self,draw,fnum):
         if self.game_over or self.win:
@@ -141,7 +87,7 @@ class Game:
             draw.line(
                 [
                     (1 * 60 + 20,10),
-                    (1 * 60 + 30,0),
+                    (1 * 60 + 30,2),
                     (1 * 60 + 40,10)
                 ],
                 fill=(255,0,0,255),
@@ -150,7 +96,7 @@ class Game:
             draw.line(
                 [
                     (18 * 60 + 20,10),
-                    (18 * 60 + 30,0),
+                    (18 * 60 + 30,2),
                     (18 * 60 + 40,10)
                 ],
                 fill=(255,0,0,255),
@@ -160,7 +106,7 @@ class Game:
             draw.line(
                 [
                     (1 * 60 + 20,50),
-                    (1 * 60 + 30,60),
+                    (1 * 60 + 30,58),
                     (1 * 60 + 40,50)
                 ],
                 fill=(255,0,0,255),
@@ -169,7 +115,7 @@ class Game:
             draw.line(
                 [
                     (18 * 60 + 20,50),
-                    (18 * 60 + 30,60),
+                    (18 * 60 + 30,58),
                     (18 * 60 + 40,50)
                 ],
                 fill=(255,0,0,255),
@@ -180,7 +126,7 @@ class Game:
             draw.line(
                 [
                     (self.apple[0] * 60 + 20,10),
-                    (self.apple[0] * 60 + 30,0),
+                    (self.apple[0] * 60 + 30,2),
                     (self.apple[0] * 60 + 40,10)
                 ],
                 fill=(0,255,255,255),
@@ -190,18 +136,18 @@ class Game:
             draw.line(
                 [
                     (self.apple[0] * 60 + 20,50),
-                    (self.apple[0] * 60 + 30,60),
+                    (self.apple[0] * 60 + 30,58),
                     (self.apple[0] * 60 + 40,50)
                 ],
                 fill=(0,255,255,255),
                 width=2
             )
 
+        def draw_centered_text(text,color):
+            font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
+            dims = draw.textsize(text,font=font)
+            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],text,fill=color,font=font,align="center")
         if self.win:
-            font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
-            dims = draw.textsize("YOU WIN",font=font)
-            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"YOU WIN",fill=(0,255,255,255),font=font,align="center")
+            draw_centered_text("YOU WIN",(0,255,255,255))
         elif self.game_over:
-            font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
-            dims = draw.textsize("GAME OVER",font=font)
-            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"GAME OVER",fill=(255,0,0,255),font=font,align="center")
+            draw_centered_text("GAME OVER",(255,0,0,255))
