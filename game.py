@@ -3,7 +3,7 @@ from PIL import ImageFont
 GRID_HEIGHT = 10
 
 class Snake:
-    head = (10,5)
+    head = (9,5)
     path = [(-1,0),(-1,0)]
     direction = (1,0)
     move_buffer = []
@@ -64,12 +64,13 @@ class Snake:
 class Game:
     snake = Snake()
     game_over = False
+    win = False
 
     def __init__(self):
         self.move_apple()
 
     def update(self):
-        if self.game_over:
+        if self.game_over or self.win:
             return
 
         self.snake.update()
@@ -77,6 +78,9 @@ class Game:
         if self.snake.head == self.apple:
             self.snake.eaten = True
             self.move_apple()
+
+        if len(self.snake.path) >= 18 * (GRID_HEIGHT - 2) - 1:
+            self.win = True
 
         if self.snake.head[0] < 1 or self.snake.head[0] > 18 or self.snake.head[1] < 1 or self.snake.head[1] > GRID_HEIGHT - 1:
             self.game_over = True
@@ -102,7 +106,7 @@ class Game:
             break
 
     def render(self,draw,fnum):
-        if self.game_over:
+        if self.game_over or self.win:
             fnum = 0
 
         scroll = self.snake.head[1] + self.snake.direction[1] * 0.2 * fnum
@@ -193,7 +197,11 @@ class Game:
                 width=2
             )
 
-        if self.game_over:
+        if self.win:
+            font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
+            dims = draw.textsize("YOU WIN",font=font)
+            draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"YOU WIN",fill=(0,255,255,255),font=font,align="center")
+        elif self.game_over:
             font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
             dims = draw.textsize("GAME OVER",font=font)
             draw.text([600 - dims[0] / 2,30 - dims[1] / 2],"GAME OVER",fill=(255,0,0,255),font=font,align="center")
