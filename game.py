@@ -119,9 +119,9 @@ class Game:
                 [0,(- scroll) * 60,1200,(- scroll + 1) * 60 + 5],
                 fill=(0,255,0,255)
             )
-        if self.snake.head[1] >= GRID_HEIGHT - 2:
+        if self.snake.head[1] >= GRID_HEIGHT - 3:
             draw.rectangle(
-                [0,(GRID_HEIGHT - scroll) * 60 - 5,1200,(GRID_HEIGHT - scroll + 1) * 60],
+                [0,(GRID_HEIGHT - 1 - scroll) * 60 - 5,1200,(GRID_HEIGHT - 1 - scroll + 1) * 60],
                 fill=(0,255,0,255)
             )
         draw.rectangle(
@@ -152,7 +152,7 @@ class Game:
                 fill=(255,0,0,255),
                 width=2
             )
-        elif self.snake.head[1] >= GRID_HEIGHT - 2:
+        elif self.snake.head[1] >= GRID_HEIGHT - 3:
             draw.line(
                 [
                     (1 * 60 + 20,50),
