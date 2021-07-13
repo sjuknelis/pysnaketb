@@ -60,10 +60,11 @@ class Game:
 
         self.snake.render(draw,fnum)
 
-        draw.rectangle(
-            [self.apple[0] * 60 + 10,(self.apple[1] - scroll) * 60 + 10,self.apple[0] * 60 + 50,(self.apple[1] - scroll) * 60 + 50],
-            fill=(0,255,255,255)
-        )
+        if abs(self.apple[1] - self.snake.head[1]) <= 1:
+            draw.rectangle(
+                [self.apple[0] * 60 + 10,(self.apple[1] - scroll) * 60 + 10,self.apple[0] * 60 + 50,(self.apple[1] - scroll) * 60 + 50],
+                fill=(0,255,255,255)
+            )
 
         if self.snake.head[1] <= 2:
             draw.rectangle(
@@ -84,65 +85,40 @@ class Game:
             fill=(0,255,0,255)
         )
 
-        if self.snake.head[1] <= 2:
-            draw.line(
-                [
-                    (1 * 60 + 20,10),
-                    (1 * 60 + 30,2),
-                    (1 * 60 + 40,10)
-                ],
-                fill=(255,0,0,255),
-                width=2
-            )
-            draw.line(
-                [
-                    (18 * 60 + 20,10),
-                    (18 * 60 + 30,2),
-                    (18 * 60 + 40,10)
-                ],
-                fill=(255,0,0,255),
-                width=2
-            )
-        elif self.snake.head[1] >= GRID_HEIGHT - 3:
-            draw.line(
-                [
-                    (1 * 60 + 20,50),
-                    (1 * 60 + 30,58),
-                    (1 * 60 + 40,50)
-                ],
-                fill=(255,0,0,255),
-                width=2
-            )
-            draw.line(
-                [
-                    (18 * 60 + 20,50),
-                    (18 * 60 + 30,58),
-                    (18 * 60 + 40,50)
-                ],
-                fill=(255,0,0,255),
-                width=2
-            )
+        if not (self.game_over or self.win):
+            def draw_arrow(x,upward,color):
+                if upward:
+                    draw.line(
+                        [
+                            (x * 60 + 20,12),
+                            (x * 60 + 30,6),
+                            (x * 60 + 40,12)
+                        ],
+                        fill=color,
+                        width=2
+                    )
+                else:
+                    draw.line(
+                        [
+                            (x * 60 + 20,48),
+                            (x * 60 + 30,54),
+                            (x * 60 + 40,48)
+                        ],
+                        fill=color,
+                        width=2
+                    )
 
-        if self.apple[1] < self.snake.head[1]:
-            draw.line(
-                [
-                    (self.apple[0] * 60 + 20,10),
-                    (self.apple[0] * 60 + 30,2),
-                    (self.apple[0] * 60 + 40,10)
-                ],
-                fill=(0,255,255,255),
-                width=2
-            )
-        elif self.apple[1] > self.snake.head[1]:
-            draw.line(
-                [
-                    (self.apple[0] * 60 + 20,50),
-                    (self.apple[0] * 60 + 30,58),
-                    (self.apple[0] * 60 + 40,50)
-                ],
-                fill=(0,255,255,255),
-                width=2
-            )
+            if self.snake.head[1] <= 2:
+                draw_arrow(1,True,(255,0,0,255))
+                draw_arrow(18,True,(255,0,0,255))
+            elif self.snake.head[1] >= GRID_HEIGHT - 3:
+                draw_arrow(1,False,(255,0,0,255))
+                draw_arrow(18,False,(255,0,0,255))
+
+            if self.apple[1] < self.snake.head[1]:
+                draw_arrow(self.apple[0],True,(0,255,255,255))
+            elif self.apple[1] > self.snake.head[1]:
+                draw_arrow(self.apple[0],False,(0,255,255,255))
 
         def draw_centered_text(text,color):
             font = ImageFont.truetype(font_path,48)
