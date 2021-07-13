@@ -3,15 +3,37 @@ import PyTouchBar as tb
 from PIL import Image,ImageDraw
 from game import Game
 
+FONT_PATH = "CourierPrime-Regular.ttf"
+
 reset = False
 
 def render(screen,game,fnum):
     im = Image.new("RGBA",(1200,60),(0,0,0,255))
     draw = ImageDraw.Draw(im)
-    game.render(draw,fnum)
+    game.render(draw,fnum,FONT_PATH)
     im.save("game.png")
 
     screen.fill((255,255,255))
+
+    if game.game_over:
+        text = "Game over"
+        color = (255,0,0)
+    elif game.win:
+        text = "You win!"
+        color = (0,200,200)
+    else:
+        text = "Play on the touchbar"
+        color = (0,0,0)
+
+    font = pygame.font.Font(FONT_PATH,20)
+    rendered = font.render(text,False,color)
+    text_rect = rendered.get_rect(center=(150,150))
+    screen.blit(rendered,text_rect)
+
+    if game.game_over:
+        rendered = font.render("Score: " + str(len(game.snake.path) + 1),False,(255,0,0))
+        text_rect = rendered.get_rect(center=(150,170))
+        screen.blit(rendered,text_rect)
 
 def button_press(button):
     global reset
@@ -22,7 +44,8 @@ def main():
     game = Game()
 
     pygame.init()
-    screen = pygame.display.set_mode((200,200))
+    pygame.font.init()
+    screen = pygame.display.set_mode((300,300))
 
     tb.prepare_pygame()
     button = tb.TouchBarItems.Button(

@@ -1,6 +1,7 @@
 import sys,time,random
 from PIL import ImageFont
 from snake import Snake
+
 GRID_HEIGHT = 10
 
 class Game:
@@ -51,7 +52,7 @@ class Game:
             if valid:
                 break
 
-    def render(self,draw,fnum):
+    def render(self,draw,fnum,font_path):
         if self.game_over or self.win:
             fnum = 0
 
@@ -144,7 +145,7 @@ class Game:
             )
 
         def draw_centered_text(text,color):
-            font = ImageFont.truetype("CourierPrime-Regular.ttf",48)
+            font = ImageFont.truetype(font_path,48)
             dims = draw.textsize(text,font=font)
             draw.text([600 - dims[0] / 2,30 - dims[1] / 2],text,fill=color,font=font,align="center")
         if self.win:
