@@ -60,3 +60,18 @@ class Snake:
             ],
             fill=(0,255,0,255)
         )
+
+        if self.direction[0] > 0 or self.direction[1] > 0:
+            x_offset = 30
+        else:
+            x_offset = 20
+
+        draw.rectangle(
+            [
+                ext[0] * 60 + x_offset,
+                (ext[1] - scroll) * 60 + 20,
+                ext[0] * 60 + x_offset + 10,
+                (ext[1] - scroll) * 60 + 30
+            ],
+            fill=(255,0,0,255)
+        )

@@ -27,7 +27,7 @@ class Game:
         if len(self.snake.path) >= 18 * (GRID_HEIGHT - 2) - 1:
             self.win = True
 
-        if self.snake.head[0] < 1 or self.snake.head[0] > 18 or self.snake.head[1] < 1 or self.snake.head[1] > GRID_HEIGHT - 1:
+        if self.snake.head[0] < 1 or self.snake.head[0] > 18 or self.snake.head[1] < 1 or self.snake.head[1] > GRID_HEIGHT - 2:
             self.game_over = True
         pos = list(self.snake.head)
         for item in self.snake.path:
@@ -58,14 +58,6 @@ class Game:
 
         scroll = self.snake.head[1] + self.snake.direction[1] * 0.2 * fnum
 
-        self.snake.render(draw,fnum)
-
-        if abs(self.apple[1] - self.snake.head[1]) <= 1:
-            draw.rectangle(
-                [self.apple[0] * 60 + 10,(self.apple[1] - scroll) * 60 + 10,self.apple[0] * 60 + 50,(self.apple[1] - scroll) * 60 + 50],
-                fill=(0,255,255,255)
-            )
-
         if self.snake.head[1] <= 2:
             draw.rectangle(
                 [0,(- scroll) * 60,1200,(- scroll + 1) * 60 + 5],
@@ -84,6 +76,14 @@ class Game:
             [1140,0,1200,60],
             fill=(0,255,0,255)
         )
+
+        self.snake.render(draw,fnum)
+
+        if abs(self.apple[1] - self.snake.head[1]) <= 1:
+            draw.rectangle(
+                [self.apple[0] * 60 + 10,(self.apple[1] - scroll) * 60 + 10,self.apple[0] * 60 + 50,(self.apple[1] - scroll) * 60 + 50],
+                fill=(0,255,255,255)
+            )
 
         if not (self.game_over or self.win):
             def draw_arrow(x,upward,color):
