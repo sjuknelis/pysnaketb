@@ -18,11 +18,15 @@ class Snake:
             self.eaten = False
 
         if len(self.move_buffer) > 0:
+            valid_move_found = False
             for (index,item) in enumerate(self.move_buffer):
                 if item != self.direction and item != (-self.direction[0],-self.direction[1]):
                     self.direction = item
                     del self.move_buffer[index]
+                    valid_move_found = True
                     break
+            if not valid_move_found:
+                self.move_buffer = []
 
     def queue(self,direction):
         if not direction in self.move_buffer:

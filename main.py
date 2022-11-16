@@ -79,7 +79,7 @@ def main():
         pygame.display.update()
         button.image = "game.png"
 
-        time.sleep(1/30)
+        time.sleep(1/15)
 
 if __name__ == "__main__":
     main()
